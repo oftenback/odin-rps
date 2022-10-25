@@ -17,48 +17,75 @@ function getComputerChoice() {
   }
 }
 
-function playRound(playerSelection, computerSelection) {
-  const winMessage = "You Win! ";
-  const loseMesage = "You Lose! ";
-  if (playerSelection == null) {
-    return "No player input."
+function getResult(playerSelection, computerSelection) {
+  if (playerSelection === computerSelection) {
+    return "tie";
   }
-  let playerPick = playerSelection.toLowerCase();
-
-  if (playerPick === computerSelection) {
-    return "You Tie! You both selected " + computerSelection;
-  }
-  switch(playerPick) {
+  switch(playerSelection) {
     case "rock":
       if (computerSelection === "scissors") {
-        return winMessage + playerPick + " beats " + computerSelection;
+        return "win";
       } else {
-        return loseMesage + computerSelection + " beats " + playerPick;
+        return "lose";
       }
     case "paper":
       if (computerSelection === "rock") {
-        return winMessage + playerPick + " beats " + computerSelection;
+        return "win";
       } else {
-        return loseMesage + computerSelection + " beats " + playerPick;
+        return "lose";
       }
     case "scissors":
       if (computerSelection === "paper") {
-        return winMessage + playerPick + " beats " + computerSelection;
+        return "win";
       } else {
-        return loseMesage + computerSelection + " beats " + playerPick;
+        return "lose";
       }
     default: 
-      return "Invalid player input";
+      return "invalid";
   }
 }
 
-function game() {
-  let playerSelection;
-  for (let i = 0; i < 5; i++) {
-    playerSelection = prompt("Pick rock, paper, or scissors");
-    let result = playRound(playerSelection, getComputerChoice());
-    console.log(result);
+function playRound(e) {
+  const computerChoice = getComputerChoice();
+  const pick = this.id;
+  const winDisplay = document.querySelector('#wins');
+  const tieDisplay = document.querySelector('#ties');
+  const loseDisplay = document.querySelector('#losses');
+  const update = document.querySelector('.update');
+  let res = getResult(pick, computerChoice);
+  if (res === "tie") {
+    ties++;
+    tieDisplay.textContent = `${ties}`;
+    update.textContent = `You tied! You both picked ${computerChoice}`;
+  } else if (res === "win") {
+    wins++;
+    winDisplay.textContent = `${wins}`;
+    update.textContent = `You won! ${pick} beats ${computerChoice}`;
+  } else if (res === "lose") {
+    losses++;
+    loseDisplay.textContent = `${losses}`;
+    update.textContent = `You lost! ${computerChoice} beats ${pick}`;
+  } else { // res === "invalid"
+    update.textContent = `Something went wrong.`;
+    return;
+  }
+
+  const buttons = document.querySelectorAll('.choice');
+  if (losses === 5 || wins === 5) {
+    buttons.forEach(button => button.removeEventListener('click', playRound));
+    let finalResult = document.createElement("div");
+    if (losses === 5) {
+      finalResult.textContent = "You lost! Computer was first to five.";
+    } else {
+      finalResult.textContent = "You won! You were first to five."
+    }
+    update.appendChild(finalResult);
   }
 }
 
-game();
+let wins = 0;
+let ties = 0;
+let losses = 0;
+
+const buttons = document.querySelectorAll('.choice');
+buttons.forEach(button => button.addEventListener('click', playRound));

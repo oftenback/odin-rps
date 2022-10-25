@@ -1,0 +1,15 @@
+.results {
+  display: flex;
+  justify-content: space-between;
+}
+
+.wins,
+.ties,
+.losses {
+  text-align: center;
+}
+
+.buttons { 
+  display: flex;
+  justify-content: space-between;
+}
